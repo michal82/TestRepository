@@ -1,4 +1,6 @@
-﻿namespace ConsoleApp2.Validation
+﻿using DataBaseLayer;
+
+namespace ConsoleApp2.Validation
 {
     public interface IValidationRule<T>
     {

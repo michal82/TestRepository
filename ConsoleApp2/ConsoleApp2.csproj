@@ -58,7 +58,6 @@
     <Compile Include="Validation\DateOfLastPaymentRule.cs" />
     <Compile Include="Validation\GuaranteeAmountRule.cs" />
     <Compile Include="Validation\IValidationRule.cs" />
-    <Compile Include="Validation\ValidationError.cs" />
     <Compile Include="XMLCompressor.cs" />
     <EmbeddedResource Include="XML\Sample.xml">
       <SubType>Designer</SubType>
@@ -71,6 +70,12 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataBaseLayer\DataBaseLayer.csproj">
+      <Project>{dca1531a-af06-4c38-88c3-6891f5cf9c7a}</Project>
+      <Name>DataBaseLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,5 +1,6 @@
 ﻿using ConsoleApp2.MappingClasses;
 using ConsoleApp2.Validation;
+using DataBaseLayer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +15,8 @@ namespace ConsoleApp2
     {
         private readonly string _xmlSchemaUrl = "./XML/Data.xsd";
         private readonly string _targetNamespace = "http://creditinfo.com/schemas/Sample/Data";
+        private readonly Database _database = new Database();
+
         public async Task ReadXml(Stream stream)
         {
             XmlReaderSettings settings = new XmlReaderSettings();
@@ -45,18 +48,18 @@ namespace ConsoleApp2
         {
             List<Task> listOfTasks = new List<Task>();
 
-            List<IValidationRule<Contract>> rules = new List<IValidationRule<Contract>>
+            List<IValidationRule<Contract>> contractRules = new List<IValidationRule<Contract>>
             {
                 new DateAccountOpenedRule(),
                 new DateOfLastPaymentRule(),
                 new GuaranteeAmountRule()
             };
 
-            foreach(var dd in rules)
+            foreach(var rule in contractRules)
             {
-                if (!dd.Validate(contract))
+                if (!rule.Validate(contract))
                 {
-                    listOfTasks.Add(WriteToDbAsync(dd.Error));
+                    listOfTasks.Add(_database.WriteValidationErrorToDbAsync(rule.Error));
                 }
             }
 
@@ -65,25 +68,17 @@ namespace ConsoleApp2
                 new DateOfBirthRule()
             };
 
-            foreach (var dd in contract.Individual)
+            foreach (var individual in contract.Individual)
             {
-                foreach(var u in individualRules)
+                foreach(var individualRule in individualRules)
                 {
-                    if (!u.Validate(dd))
+                    if (!individualRule.Validate(individual))
                     {
-                        listOfTasks.Add(WriteToDbAsync(u.Error));
+                        listOfTasks.Add(_database.WriteValidationErrorToDbAsync(individualRule.Error));
                     }
                 }
             }
             return listOfTasks;
-        }
-
-        public static Task WriteToDbAsync(ValidationError validationError)
-        {
-            return new Task(() => 
-            {
-                Console.WriteLine(validationError.Message);
-            });
         }
 
         private void ValidationCallBack(object sender, ValidationEventArgs e)
