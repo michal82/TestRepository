@@ -1,8 +1,10 @@
-﻿using System;
+﻿using ConsoleApp2.MappingClasses;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace ConsoleApp2
 {
@@ -14,6 +16,7 @@ namespace ConsoleApp2
         public async Task ReadXml(Stream stream)
         {
             XmlReaderSettings settings = new XmlReaderSettings();
+            XmlSerializer serializer = new XmlSerializer(typeof(Contract), "http://creditinfo.com/schemas/Sample/Data");
 
             XmlSchemaSet sc = new XmlSchemaSet();
             sc.Add(this._targetNamespace, this._xmlSchemaUrl);
@@ -21,26 +24,16 @@ namespace ConsoleApp2
             settings.Schemas = sc;
             settings.ValidationEventHandler += ValidationCallBack;
             settings.Async = true;
+            XmlDocument doc = new XmlDocument();
             using (XmlReader reader = XmlReader.Create(stream, settings))
             {
                 while (await reader.ReadAsync())
                 {
-                    switch (reader.NodeType)
+                    if (reader.Name == "Contract")
                     {
-                        case XmlNodeType.Element:
-                            Console.WriteLine("Start Element {0}", reader.Name);
-                            break;
-                        case XmlNodeType.Text:
-                            Console.WriteLine("Text Node: {0}",
-                                     await reader.GetValueAsync());
-                            break;
-                        case XmlNodeType.EndElement:
-                            Console.WriteLine("End Element {0}", reader.Name);
-                            break;
-                        default:
-                            Console.WriteLine("Other node {0} with value {1}",
-                                            reader.NodeType, reader.Value);
-                            break;
+                        var t = serializer.Deserialize(reader);
+                        int i = 1;
+                    
                     }
                 }
             }

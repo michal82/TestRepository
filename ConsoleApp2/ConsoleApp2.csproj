@@ -43,9 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MappingClasses\Amount.cs" />
+    <Compile Include="MappingClasses\Contract.cs" />
+    <Compile Include="MappingClasses\ContractData.cs" />
+    <Compile Include="MappingClasses\IdentificationNumbers.cs" />
+    <Compile Include="MappingClasses\Individual.cs" />
+    <Compile Include="MappingClasses\SubjectRole.cs" />
     <Compile Include="MyXmlReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validations.cs" />
     <Compile Include="XMLCompressor.cs" />
     <EmbeddedResource Include="XML\Sample.xml">
       <SubType>Designer</SubType>
