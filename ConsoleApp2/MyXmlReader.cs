@@ -1,5 +1,7 @@
 ﻿using ConsoleApp2.MappingClasses;
+using ConsoleApp2.Validation;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
@@ -12,7 +14,6 @@ namespace ConsoleApp2
     {
         private readonly string _xmlSchemaUrl = "./XML/Data.xsd";
         private readonly string _targetNamespace = "http://creditinfo.com/schemas/Sample/Data";
-
         public async Task ReadXml(Stream stream)
         {
             XmlReaderSettings settings = new XmlReaderSettings();
@@ -25,24 +26,69 @@ namespace ConsoleApp2
             settings.ValidationEventHandler += ValidationCallBack;
             settings.Async = true;
             XmlDocument doc = new XmlDocument();
+
             using (XmlReader reader = XmlReader.Create(stream, settings))
             {
                 while (await reader.ReadAsync())
                 {
                     if (reader.Name == "Contract")
                     {
-                        var t = serializer.Deserialize(reader);
-                        int i = 1;
-                    
+                        var contract = (Contract)serializer.Deserialize(reader);
+                        var validations = Validate(contract);
+                        validations.ForEach(x => x.Start());
                     }
                 }
             }
         }
 
+        List<Task> Validate(Contract contract)
+        {
+            List<Task> listOfTasks = new List<Task>();
+
+            List<IValidationRule<Contract>> rules = new List<IValidationRule<Contract>>
+            {
+                new DateAccountOpenedRule(),
+                new DateOfLastPaymentRule(),
+                new GuaranteeAmountRule()
+            };
+
+            foreach(var dd in rules)
+            {
+                if (!dd.Validate(contract))
+                {
+                    listOfTasks.Add(WriteToDbAsync(dd.Error));
+                }
+            }
+
+            List<IValidationRule<Individual>> individualRules = new List<IValidationRule<Individual>>
+            {
+                new DateOfBirthRule()
+            };
+
+            foreach (var dd in contract.Individual)
+            {
+                foreach(var u in individualRules)
+                {
+                    if (!u.Validate(dd))
+                    {
+                        listOfTasks.Add(WriteToDbAsync(u.Error));
+                    }
+                }
+            }
+            return listOfTasks;
+        }
+
+        public static Task WriteToDbAsync(ValidationError validationError)
+        {
+            return new Task(() => 
+            {
+                Console.WriteLine(validationError.Message);
+            });
+        }
+
         private void ValidationCallBack(object sender, ValidationEventArgs e)
         {
             Console.WriteLine($"Validation Error:\n   {e.Message}\n");
-            throw new XmlSchemaValidationException(e.Message);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace ConsoleApp2.MappingClasses
 {
-    public class Individual
+    public class Individual: IMustBeValidated
     {
         [XmlElement("CustomerCode")]
         public string CustomerCode { get; set; }

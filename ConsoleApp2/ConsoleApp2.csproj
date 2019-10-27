@@ -47,12 +47,18 @@
     <Compile Include="MappingClasses\Contract.cs" />
     <Compile Include="MappingClasses\ContractData.cs" />
     <Compile Include="MappingClasses\IdentificationNumbers.cs" />
+    <Compile Include="MappingClasses\IMustBeValidated.cs" />
     <Compile Include="MappingClasses\Individual.cs" />
     <Compile Include="MappingClasses\SubjectRole.cs" />
     <Compile Include="MyXmlReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Validations.cs" />
+    <Compile Include="Validation\DateAccountOpenedRule.cs" />
+    <Compile Include="Validation\DateOfBirthRule.cs" />
+    <Compile Include="Validation\DateOfLastPaymentRule.cs" />
+    <Compile Include="Validation\GuaranteeAmountRule.cs" />
+    <Compile Include="Validation\IValidationRule.cs" />
+    <Compile Include="Validation\ValidationError.cs" />
     <Compile Include="XMLCompressor.cs" />
     <EmbeddedResource Include="XML\Sample.xml">
       <SubType>Designer</SubType>

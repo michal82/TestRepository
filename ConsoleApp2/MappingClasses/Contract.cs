@@ -3,7 +3,7 @@
 namespace ConsoleApp2.MappingClasses
 {
     [XmlRoot("Contract", Namespace = "http://creditinfo.com/schemas/Sample/Data")]
-    public class Contract
+    public class Contract: IMustBeValidated
     {
         [XmlElement("ContractCode")]
         public string ContractCode { get; set; }
